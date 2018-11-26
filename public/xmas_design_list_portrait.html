@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List</title>
+    <link rel="stylesheet" href="stylesheets/xmas_design_list_portrait.css">
+    <script src="javascripts/site.js"></script>
+    <h1>XMAS<br/>SHOPPING</h1>
+</head>
+<body>
+
+<fieldset id="container">
+    <br/><label>MY SHOPPING LIST</label><br/><br/>
+</fieldset>
+<br/><button>EMPTY</button>&nbsp;&nbsp;&nbsp;&nbsp;<button>ADD ITEM</button><br/><br/>
+<template id="viewListItem">
+    <button class="btnIcon">🗑</button>
+    <button class="btnIcon">✓</button>&nbsp;
+    <input type="text" name="listItem" id="txtDescription" value=" Bose QC35 Headset"><span id="itemMenu" style="cursor: pointer">&nbsp;☰</span><br/>
+    <p>⌛ <span id="txtDateDue">12.22.18</span></p>
+</template>
+<script>
+    let authenticationToken = "";
+    let authenticatedUser = null;
+
+    window.onload = function(){
+        authenticationToken = localStorage.getItem("authenticationToken");
+        authenticatedUser =  JSON.parse(localStorage.getItem("authenticatedUser"));
+        getList();
+    };
+
+    function getList(){
+        let url = "/api/list?fdUserID=" + authenticatedUser.fdUserID.toString();
+        let request = {
+            method: "GET",
+            /*query:{fdUserID: authenticatedUser.fdUserID},*/
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'x-access-auth': authenticationToken
+            }
+        };
+        fetch(url, request).then(function (res) {
+            if (res.status < 400) {
+                return res.json();
+            } else {
+                return Promise.reject(new Error("Session not valid. log inn again"));
+            }
+        }).then(function (json) {
+            showList(json);
+        }).catch(function (err) {
+            console.log(err.message);
+        });
+
+    }
+
+    function showList(aList){
+      for(let index = 0; index < aList.length; index++){
+        let template = getTemplate("viewListItem");
+        template.id="viewListItem"+index;
+        let templateElement = template.querySelector("#txtDescription");
+        templateElement.value = aList[index].fdDescription;
+        templateElement.id = "txtDescription"+index;
+        templateElement = template.querySelector("#txtDateDue");
+        templateElement.value = aList[index].fdDateDue;
+        templateElement.id = "txtDateDue"+index;
+        templateElement = template.querySelector("#itemMenu");
+        templateElement.id = "itemMenu"+index;
+        templateElement.addEventListener("click", function(){
+          editListItem({fdUserID: aList[index].fdUserID, fdItemID: aList[index].fdListItemID})
+        });
+        document.getElementById("container").appendChild(template);
+      }
+    }
+
+    function editListItem(aItem){
+      console.log(aItem);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+
+h1{
+    font-family: Verdana;
+    font-size: 95px;
+    color: darkred;
+    text-align: center;
+
+}
+
+.btnIcon{
+    height: 80px;
+    width: 70px;
+    font-size: 40px;
+    border-radius: 50px;
+    background-color: peachpuff;
+    color: darkred;
+}
+
+button{
+    height: 90px;
+    width: 350px;
+    font-size: 50px;
+    border-radius: 50px;
+    background-color: peachpuff;
+    color: darkred;
+}
+
+input{
+    height: 60px;
+    width: 560px;
+    font-size: 40px;
+}
+
+body{
+    font-family: Verdana;
+    font-size: 60px;
+    text-align: center;
+    background-color: lightgreen;
+    color: darkred;
+}
+
+fieldset{
+    background-color: tomato;
+    border-radius: 60px;
+}
+
+p{
+    font-size: 30px;
+}

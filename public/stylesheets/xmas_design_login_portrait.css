@@ -1,0 +1,38 @@
+
+h1{
+    font-family: Verdana;
+    font-size: 125px;
+    color: darkred;
+    text-align: center;
+
+}
+
+
+button{
+    height: 120px;
+    width: 500px;
+    font-size: 60px;
+    border-radius: 40px;
+    background-color: peachpuff;
+    color: darkred;
+}
+
+input{
+    font-family: Verdana;
+    font-size: 60px;
+    height: 100px;
+    width: 600px;
+}
+
+body{
+    font-family: Verdana;
+    font-size: 60px;
+    text-align: center;
+    background-color: lightgreen;
+    color: darkred;
+}
+
+fieldset{
+    background-color: tomato;
+    border-radius: 60px;
+}

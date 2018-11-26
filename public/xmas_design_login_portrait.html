@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in</title>
+
+    <link rel="stylesheet" href="stylesheets/xmas_design_login_portrait.css">
+    <script src="javascripts/site.js"></script>
+</head>
+<body>
+    <div id="divContainer">'
+    </div>
+    <template id="viewLogin">
+        <h1>XMAS<br/>SHOPPING</h1>
+        <form id="formLogin" action="list" method="post">
+            <input type="hidden" name="auth" id="_auth">
+            <input type="hidden" name="fdUserId" id="_UserID">
+            <fieldset>
+                <br/><label for="txtUserName">USERNAME</label><br/><br/>
+                <input type="text" id="txtUserName" name="fdUserName" value="Arne-Thomas"><br/><br/>
+                <label for="txtPassword">PASSWORD</label><br/><br/>
+                <input type="password" id="txtPassword" name="fdPassword" value="12345"><br/><br/>
+            </fieldset><br/>
+            <button>LOG IN</button><br/><br/>
+            <button>SIGN UP</button>
+        </form>
+    </template>
+</body>
+<script>
+    let authenticationToken = "";
+    let authenticatedUser = "";
+
+    window.onload = function () {
+        displayLogin();
+    };
+
+    function displayLogin() {
+        clearContainer();
+        let loginView = getTemplate("viewLogin");
+        let formLogin = loginView.querySelector("#formLogin");
+        formLogin.onsubmit = function (evt) {
+            evt.preventDefault();
+            let txtUserName = document.getElementById("txtUserName").value;
+            let txtPassword = document.getElementById("txtPassword").value;
+            authenticateUser(txtUserName, txtPassword);
+        };
+        addToContainer(loginView);
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
+    function authenticateUser(aUsername, aPassword) {
+        log("Starting authentication request", `Username ${aUsername}`, `Password ${aPassword}`);
+        let credentials = `Basic ${ btoa(aUsername + ":" + aPassword)}`;
+        let request = {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': credentials
+            }
+        };
+        fetch("/login", request).then(function (response) {
+            if (response.status < 400) {
+                // OK we are authenticated.
+                return response.json(); // Grab the JSON payload.
+            } else if (response.status === 401) {
+                // Username or password was wrong, informe the user.
+                return Promise.reject(new Error("Wrong username or password"));
+            } else {
+                // Some other thing went wrong.
+                return Promise.reject(new Error("Could not log you in at this time, try again later"));
+            }
+        }).then(function (responseJSON) {
+            authenticationToken = responseJSON.auth; // Because this is where the server puts the token.
+            authenticatedUser = responseJSON.user; // Information about the user.
+            localStorage.setItem("authenticationToken", authenticationToken);
+            localStorage.setItem("authenticatedUser", JSON.stringify(authenticatedUser));
+            //Bruker er logget inn og vi kan hente liste siden;
+            getListPage();
+        }).catch(function (err) {
+            // fetch could not complete the request.
+            //displayError(err.message);
+        });
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
+    function getListPage() {
+        let formLogin = document.getElementById("formLogin");
+        document.getElementById("_auth").value = authenticationToken;
+        document.getElementById("_UserID").value = authenticatedUser.fdUserID;
+        formLogin.onsubmit = null;
+        formLogin.submit()
+
+    }
+
+</script>
+</html>
